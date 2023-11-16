@@ -28,6 +28,8 @@ const Carrito = () => {
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
+  const [cantidadesProductos, setCantidadesProductos] = useState([]);
+
   useFocusEffect(
     React.useCallback(() => {
       getDataFromDB();
@@ -55,6 +57,38 @@ const Carrito = () => {
     }
   };
 
+  const incrementarCantidad = (idProducto) => {
+    setCantidadesProductos((prevCantidades) => {
+      const nuevoArray = [...prevCantidades];
+      const index = nuevoArray.findIndex(
+        (item) => item.idProducto === idProducto
+      );
+
+      if (index !== -1) {
+        nuevoArray[index].cantidad += 1;
+      } else {
+        nuevoArray.push({ idProducto, cantidad: 1 });
+      }
+
+      return nuevoArray;
+    });
+  };
+
+  const decrementarCantidad = (idProducto) => {
+    setCantidadesProductos((prevCantidades) => {
+      const nuevoArray = [...prevCantidades];
+      const index = nuevoArray.findIndex(
+        (item) => item.idProducto === idProducto
+      );
+
+      if (index !== -1 && nuevoArray[index].cantidad > 1) {
+        nuevoArray[index].cantidad -= 1;
+      }
+
+      return nuevoArray;
+    });
+  };
+
   //get total price of all items in the cart
   const getTotal = (productData) => {
     let total = 0;
@@ -77,10 +111,25 @@ const Carrito = () => {
           array.splice(index, 1);
         }
 
+        // Eliminar el producto del array cantidadProductos
+        const cantidadProductoIndex = cantidadesProductos.findIndex(
+          (producto) => producto.idProducto === id
+        );
+        if (cantidadProductoIndex !== -1) {
+          cantidadesProductos.splice(cantidadProductoIndex, 1);
+        }
+
         await AsyncStorage.setItem("cartItems", JSON.stringify(array));
         getDataFromDB();
       }
     }
+  };
+
+  const getCantidad = (idProducto) => {
+    const cantidadObj = cantidadesProductos.find(
+      (item) => item.idProducto === idProducto
+    );
+    return cantidadObj ? cantidadObj.cantidad : 0;
   };
 
   //checkout
@@ -125,13 +174,47 @@ const Carrito = () => {
     setPopupVisible(true);
   };
 
+  // const handleAccept = async () => {
+  //   try {
+  //     setLoading(true);
+
+  //     let productos = JSON.parse(await AsyncStorage.getItem("cartItems"));
+  //     const requestData = {
+  //       idCliente: parseInt(await AsyncStorage.getItem("my-key")),
+  //       total: total,
+  //       detalleventas: productos.map((producto) => ({
+  //         idProducto: producto.idProductos,
+  //         cantidad: producto.cantidad,
+  //         nit: "123456789", // Reemplaza con el valor real de nit
+  //         precioUnitario: parseFloat(producto.precio),
+  //         importe: parseFloat(producto.precio) * producto.cantidad,
+  //       })),
+  //     };
+
+  //     await axios.post("http://192.168.0.100:3000/api/venta/", requestData);
+
+  //     setLoading(false);
+  //     setPopupVisible(false);
+  //     await AsyncStorage.removeItem("cartItems");
+
+  //     alert("La compra fue realizada");
+  //     router.push("/Home");
+  //   } catch (error) {
+  //     setLoading(false);
+  //     setPopupVisible(false);
+  //     return error;
+  //   }
+  // };
+
   const handleAccept = async () => {
     try {
       setLoading(true);
 
-      let productos = JSON.parse(await AsyncStorage.getItem("cartItems"));
+      const productos = JSON.parse(await AsyncStorage.getItem("cartItems"));
+      const idCliente = parseInt(await AsyncStorage.getItem("my-key"));
+
       const requestData = {
-        idCliente: parseInt(await AsyncStorage.getItem("my-key")),
+        idCliente: idCliente,
         total: total,
         detalleventas: productos.map((producto) => ({
           idProducto: producto.idProductos,
@@ -142,14 +225,45 @@ const Carrito = () => {
         })),
       };
 
-      await axios.post("http://192.168.0.100:3000/api/venta/", requestData);
+      // Hacer la primera petición para registrar la venta
+      const ventaResponse = await axios.post(
+        "http://192.168.0.100:3000/api/venta/",
+        requestData
+      );
 
-      setLoading(false);
-      setPopupVisible(false);
-      await AsyncStorage.removeItem("cartItems");
+      // Verificar que la venta fue exitosa antes de actualizar el stock
+      if (ventaResponse.status === 200) {
+        // Hacer la segunda petición para actualizar el stock de productos
+        await Promise.all(
+          cantidadesProductos.map(async (cantidadProducto) => {
+            const cantidadNueva = cantidadProducto.cantidad;
+            const idProducto = cantidadProducto.idProducto;
 
-      alert("La compra fue realizada");
-      router.push("/Home");
+            await axios.put(
+              `http://192.168.0.100:3000/api/venta/stock/${idProducto}`,
+              {
+                cantidad: cantidadNueva,
+              }
+            );
+          })
+        );
+        setCantidadesProductos([]);
+        
+
+        setLoading(false);
+        setPopupVisible(false);
+       
+        await AsyncStorage.removeItem("cartItems");
+
+        alert("La compra fue realizada");
+        alert("CANTIDADEEEESSSS "+cantidadesProductos);
+        router.push("/Home");
+      } else {
+        // Manejar caso donde la venta no fue exitosa
+        setLoading(false);
+        setPopupVisible(false);
+        alert("Hubo un problema al procesar la venta");
+      }
     } catch (error) {
       setLoading(false);
       setPopupVisible(false);
@@ -258,7 +372,8 @@ const Carrito = () => {
                 alignItems: "center",
               }}
             >
-              <View
+              <TouchableOpacity
+                onPress={() => decrementarCantidad(data.idProductos)}
                 style={{
                   borderRadius: 100,
                   marginRight: 20,
@@ -275,9 +390,10 @@ const Carrito = () => {
                     color: COLOURS.backgroundDark,
                   }}
                 />
-              </View>
-              <Text>1</Text>
-              <View
+              </TouchableOpacity>
+              <Text>{getCantidad(data.idProductos)}</Text>
+              <TouchableOpacity
+                onPress={() => incrementarCantidad(data.idProductos)}
                 style={{
                   borderRadius: 100,
                   marginLeft: 20,
@@ -294,7 +410,7 @@ const Carrito = () => {
                     color: COLOURS.backgroundDark,
                   }}
                 />
-              </View>
+              </TouchableOpacity>
             </View>
             <TouchableOpacity
               onPress={() => removeItemFromCart(data.idProductos)}
@@ -670,34 +786,38 @@ const Carrito = () => {
         </TouchableOpacity>
 
         <Modal animationInTiming={500} isVisible={isPopupVisible}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <MaterialCommunityIcons
-                name="shopping"
-                size={50}
-                color="#2196F3"
-                style={styles.icon}
-              />
-              <Text style={styles.modalText}>
-                ¿Desea realizar la compra por {total} Bs.?
-              </Text>
-              <View style={styles.buttonContainer}>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={handleCancel}
-                >
-                  <Text style={styles.textStyle}>Cancelar</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.button, styles.buttonOpen]}
-                  onPress={handleAccept}
-                >
-                  <Text style={styles.textStyle}>Comprar</Text>
-                </Pressable>
-              </View>
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <MaterialCommunityIcons
+            name="shopping"
+            size={50}
+            color="#2196F3"
+            style={styles.icon}
+          />
+          <Text style={styles.modalText}>
+            ¿Desea realizar la compra por {total} Bs.?
+          </Text>
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#2196F3" />
+          ) : (
+            <View style={styles.buttonContainer}>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={handleCancel}
+              >
+                <Text style={styles.textStyle}>Cancelar</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.button, styles.buttonOpen]}
+                onPress={handleAccept}
+              >
+                <Text style={styles.textStyle}>Comprar</Text>
+              </Pressable>
             </View>
-          </View>
-        </Modal>
+          )}
+        </View>
+      </View>
+    </Modal>
       </View>
     </View>
   );
