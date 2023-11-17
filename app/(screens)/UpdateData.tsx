@@ -118,7 +118,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
         try {
           const id = await AsyncStorage.getItem('my-key');
           const resp = await axios.put(
-            `http://192.168.0.100:3000/api/cliente/${id}`,
+            `http://${process.env.EXPO_PUBLIC_IP}:3000/api/cliente/${id}`,
             {
               nombre: user.nombres,
   
@@ -184,7 +184,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
                 style={{
                   fontSize: 30,
                   color: Colors.primary,
-                  fontFamily: "poppins-bold",
                 }}
               >
                 Actualiza tus datos
@@ -274,7 +273,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
                       color: "#fff",
                       textAlign: "center",
                       fontSize: 16,
-                      fontFamily: "poppins-bold",
                     }}
                   >
                     Actualizar
@@ -303,7 +301,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
               >
                 <Text
                   style={{
-                    fontFamily: "poppins-regular",
                     marginBottom: 10,
                     fontSize: 16,
                   }}
@@ -321,7 +318,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
                   }}
                   onPress={closeModal}
                 >
-                  <Text style={{ fontFamily: "poppins-regular", color: "white" }}>
+                  <Text style={{ color: "white" }}>
                     Aceptar
                   </Text>
                 </TouchableOpacity>
@@ -339,8 +336,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
       padding: 15,
       backgroundColor: Colors.lightPrimary,
       borderRadius: 30,
-      marginVertical: 5,
-      fontFamily: "poppins-regular",
+      marginVertical: 5
     },
     inputError: {
       borderColor: "red", // Puedes cambiar el color del borde o el estilo que desees.

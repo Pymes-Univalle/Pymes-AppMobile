@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useFonts } from "expo-font";
 import fonts from "../../config/Fonts";
 import Colors from "../../config/Colors";
+import CryptoJS from "crypto-js";
 import axios from "axios";
 import { Stack, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -36,11 +37,15 @@ const ChangePass = () => {
             }
             const id = await AsyncStorage.getItem('my-key');
             const response = await axios.put(`http://${process.env.EXPO_PUBLIC_IP}:3000/api/login/${id}`, {
-                contrasena: newPass
+                contrasena: CryptoJS.MD5(newPass).toString(
+                    CryptoJS.enc.Hex
+                  )
             });
             alert("Contraseña Modificada");
+            router.push("/Perfil");
         } catch (e) {
-
+            alert("Tenemos problemas al actualizar tu contraseña");
+            console.log(e.error);
         }
     };
     return !fontsLoaded ? null : (

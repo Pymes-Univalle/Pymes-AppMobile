@@ -19,6 +19,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Stack, router } from 'expo-router';
 import { useRoute, Route } from '@react-navigation/native';
+import Colors from '../../config/Colors';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const ProductInfo = () => {
   const route = useRoute<Route<string, { productId?: number }>>();
@@ -70,7 +72,12 @@ const ProductInfo = () => {
   //add to cart
 
   const addToCart = async (product: Product) => {
-    alert("Entro al carrito")
+    const id = await AsyncStorage.getItem('my-key');
+    if (!id) {
+      router.push("/Login");
+      return;
+    }
+
     let itemArray = await AsyncStorage.getItem('cartItems');
     if (itemArray) {
       let array: Product[] = JSON.parse(itemArray);
@@ -101,7 +108,7 @@ const ProductInfo = () => {
       style={{
         width: '100%',
         height: '100%',
-        backgroundColor: COLOURS.white,
+        backgroundColor: COLOURS.backgroundLight,
         position: 'relative',
       }}>
       <Stack.Screen options={{ headerTitle: "Detalles" }}></Stack.Screen>
@@ -113,7 +120,7 @@ const ProductInfo = () => {
         <View
           style={{
             width: '100%',
-            backgroundColor: COLOURS.backgroundLight,
+            backgroundColor: COLOURS.white,
             borderBottomRightRadius: 20,
             borderBottomLeftRadius: 20,
             position: 'relative',
@@ -121,27 +128,6 @@ const ProductInfo = () => {
             alignItems: 'center',
             marginBottom: 4,
           }}>
-          {/* <View
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingTop: 16,
-              paddingLeft: 16,
-            }}>
-            <TouchableOpacity onPress={() => router.back()}>
-              <Entypo
-                name="chevron-left"
-                style={{
-                  fontSize: 18,
-                  color: COLOURS.backgroundDark,
-                  padding: 12,
-                  backgroundColor: COLOURS.white,
-                  borderRadius: 10,
-                }}
-              />
-            </TouchableOpacity>
-          </View> */}
           <FlatList
             data={product && product.ruta}
             horizontal
@@ -207,7 +193,7 @@ const ProductInfo = () => {
         </View>
         <View
           style={{
-            paddingHorizontal: 16,
+            paddingHorizontal: 25,
             marginTop: 6,
           }}>
           <View
@@ -228,8 +214,9 @@ const ProductInfo = () => {
               style={{
                 fontSize: 12,
                 color: COLOURS.black,
+                marginLeft: 10
               }}>
-              Shopping
+              {product?.categoria.nombre}
             </Text>
           </View>
           <View
@@ -250,16 +237,6 @@ const ProductInfo = () => {
               }}>
               {product && product.nombre}
             </Text>
-            <Ionicons
-              name="link-outline"
-              style={{
-                fontSize: 24,
-                color: COLOURS.blue,
-                backgroundColor: COLOURS.blue + 10,
-                padding: 8,
-                borderRadius: 100,
-              }}
-            />
           </View>
           <Text
             style={{
@@ -275,7 +252,7 @@ const ProductInfo = () => {
             }}>
             {product && product.descripcion}
           </Text>
-          <View
+          {/* <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -301,31 +278,32 @@ const ProductInfo = () => {
                   borderRadius: 100,
                   marginRight: 10,
                 }}>
-                <Entypo
-                  name="location-pin"
+                <FontAwesome
+                  name='money'
                   style={{
                     fontSize: 16,
                     color: COLOURS.blue,
                   }}
-                />
+                ></FontAwesome>
               </View>
               <Text> Rustaveli Ave 57,{'\n'}17-001, Batume</Text>
             </View>
-            <Entypo
-              name="chevron-right"
-              style={{
-                fontSize: 22,
-                color: COLOURS.backgroundDark,
-              }}
-            />
+          </View> */}
+          <View style={{ flexDirection: 'row' }}>
+            {product?.atributo?.map((atributo, index) => (
+              <View key={index} style={{ marginRight: 10, backgroundColor: COLOURS.darkGray, padding: 15, borderRadius:10, alignItems: 'center' }}>
+                <Text style={{ fontWeight: 'bold', color: COLOURS.white }}>{atributo?.nombre}</Text>
+                <Text style={{ color: COLOURS.white }}>{atributo?.valor}</Text>
+              </View>
+            ))}
           </View>
           <View
             style={{
-              paddingHorizontal: 16,
+              marginTop: 20,
             }}>
             <Text
               style={{
-                fontSize: 18,
+                fontSize: 22,
                 fontWeight: '500',
                 maxWidth: '85%',
                 color: COLOURS.black,
@@ -347,11 +325,12 @@ const ProductInfo = () => {
           alignItems: 'center',
         }}>
         <TouchableOpacity
-          onPress={() => addToCart(product)}
+          onPress={() => { product.cantidad > 0 ? addToCart(product) : alert("Producto no disponible por el momento") }}
           style={{
+            marginBottom: 30,
             width: '86%',
             height: '90%',
-            backgroundColor: COLOURS.blue,
+            backgroundColor: product && product.cantidad > 0 ? COLOURS.blue : COLOURS.backgroundMedium,
             borderRadius: 20,
             justifyContent: 'center',
             alignItems: 'center',
@@ -364,7 +343,7 @@ const ProductInfo = () => {
               color: COLOURS.white,
               textTransform: 'uppercase',
             }}>
-            {product && product.cantidad > 0 ? 'Add to cart' : 'Not Avialable'}
+            {product && product.cantidad > 0 ? 'Añadir al Carrito' : 'No disponible'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -373,4 +352,5 @@ const ProductInfo = () => {
 };
 
 export default ProductInfo;
+
 

@@ -1,22 +1,23 @@
 import {
-    View,
-    Text,
-    TouchableOpacity,
-    StyleSheet,
-    AppRegistry,
-    ScrollView,
-  } from "react-native";
-  import React, { useEffect, useState } from "react";
-  import { useFocusEffect } from "@react-navigation/native";
-  import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-  import Colors from "../../config/Colors";
-  import axios from "axios";
-  import Modal from "react-native-modal";
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  AppRegistry,
+  ScrollView,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Colors from "../../config/Colors";
+import axios from "axios";
+import Modal from "react-native-modal";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-  
-  const router = useRouter();
-  
+import { COLOURS } from "../../config/Theme";
+
+const router = useRouter();
+
 
 const Perfil = () => {
   const [nombres, setNombres] = useState("");
@@ -90,212 +91,232 @@ const Perfil = () => {
     setModalVisibleConfirm(false);
     router.push("/Login");
   };
-    return (
-        <ScrollView style={{ margin: 10 }}>
-            <TouchableOpacity onPress={() => router.push("/Home")} />
-            <View
-                style={{
-                    backgroundColor: Colors.background,
-                    borderRadius: 30,
-                    padding: 15,
-                }}
-            >
-                <View style={styles.profileContainer}>
-                    <MaterialCommunityIcons
-                        name="account-circle"
-                        size={100}
-                        color={Colors.gray}
-                    />
-                </View>
-                <Text style={styles.textTittle}>
-                    {" "}
-                    Nombre: <Text style={styles.textData}>{nombres}</Text>
-                </Text>
-                <Text style={styles.textTittle}>
-                    {" "}
-                    Apellido: <Text style={styles.textData}>{apellidos}</Text>
-                </Text>
-                <Text style={styles.textTittle}>
-                    {" "}
-                    Correo: <Text style={styles.textData}>{correo}</Text>
-                </Text>
-                <Text style={styles.textTittle}>
-                    {" "}
-                    Celular: <Text style={styles.textData}>{celular}</Text>
-                </Text>
-                <Text style={styles.textTittle}>
-                    {" "}
-                    Direccion: <Text style={styles.textData}>{direccion}</Text>
-                </Text>
-            </View>
+  return (
+    <ScrollView style={{ margin: 10 }}>
+      <TouchableOpacity onPress={() => router.push("/Home")} />
+      <View
+        style={{
+          backgroundColor: Colors.background,
+          borderRadius: 30,
+          padding: 15,
+        }}
+      >
+        <View style={styles.profileContainer}>
+          <MaterialCommunityIcons
+            name="account-circle"
+            size={100}
+            color={Colors.gray}
+          />
+        </View>
+        <Text style={styles.textTittle}>
+          {" "}
+          Nombre: <Text style={styles.textData}>{nombres}</Text>
+        </Text>
+        <Text style={styles.textTittle}>
+          {" "}
+          Apellido: <Text style={styles.textData}>{apellidos}</Text>
+        </Text>
+        <Text style={styles.textTittle}>
+          {" "}
+          Correo: <Text style={styles.textData}>{correo}</Text>
+        </Text>
+        <Text style={styles.textTittle}>
+          {" "}
+          Celular: <Text style={styles.textData}>{celular}</Text>
+        </Text>
+        <Text style={styles.textTittle}>
+          {" "}
+          Direccion: <Text style={styles.textData}>{direccion}</Text>
+        </Text>
+      </View>
 
-            <TouchableOpacity style={styles.button}>
-                <Text
-                    onPress={() => router.push("UpdateData")}
-                    style={styles.buttonText}
-                >
-                    Cambiar Datos
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
-                <Text
-                    onPress={() => router.push("ChangePass")}
-                    style={styles.buttonText}
-                >
-                    Cambiar Contraseña
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonDelete}>
-                <Text onPress={clickDelete} style={styles.buttonText}>
-                    Eliminar Cuenta
-                </Text>
-            </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => router.push("UpdateData")}
+        style={{
+          height: 50,
+          backgroundColor: COLOURS.blueText,
+          borderRadius: 20,
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: 10
+        }}>
+        <Text
+          style={styles.buttonText}
+        >
+          Cambiar Datos
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => router.push("ChangePass")}
+        style={{
+          height: 50,
+          backgroundColor: COLOURS.blueText,
+          borderRadius: 20,
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: 10
+        }}>
+        <Text
+          style={styles.buttonText}
+        >
+          Cambiar Contraseña
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={clickDelete}
+        style={{
+          height: 50,
+          backgroundColor: COLOURS.darkGray,
+          borderRadius: 20,
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: 10
+        }}>
+        <Text style={styles.buttonText}>
+          Eliminar Cuenta
+        </Text>
+      </TouchableOpacity>
 
-            <Modal
-                isVisible={isModalVisible}
-                animationIn="slideInUp"
-                animationOut="slideOutDown"
-                animationInTiming={1000}
-                animationOutTiming={1000}
+      <Modal
+        isVisible={isModalVisible}
+        animationIn="slideInUp"
+        animationOut="slideOutDown"
+        animationInTiming={1000}
+        animationOutTiming={1000}
+      >
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 40,
+              borderRadius: 20,
+            }}
+          >
+            <Text
+              style={{
+                marginBottom: 10,
+                fontSize: 16,
+              }}
             >
-                <View
-                    style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-                >
-                    <View
-                        style={{
-                            backgroundColor: "white",
-                            padding: 40,
-                            borderRadius: 20,
-                        }}
-                    >
-                        <Text
-                            style={{
-                                fontFamily: "poppins-regular",
-                                marginBottom: 10,
-                                fontSize: 16,
-                            }}
-                        >
-                            ¿Deseas eliminar tu cuenta?
-                        </Text>
-                        <TouchableOpacity
-                            style={{
-                                padding: 5,
-                                backgroundColor: Colors.danger,
-                                marginBottom: 10,
-                                borderRadius: 30,
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}
-                            onPress={deleteCliente}
-                        >
-                            <Text style={{ fontFamily: "poppins-regular", color: "white" }}>
-                                Eliminar
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={{
-                                padding: 5,
-                                backgroundColor: Colors.gray,
-                                marginBottom: 10,
-                                borderRadius: 30,
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}
-                            onPress={closeModal}
-                        >
-                            <Text
-                                style={{ fontFamily: "poppins-regular", color: Colors.text }}
-                            >
-                                Cancelar
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
+              ¿Deseas eliminar tu cuenta?
+            </Text>
+            <TouchableOpacity
+              style={{
+                padding: 5,
+                backgroundColor: Colors.danger,
+                marginBottom: 10,
+                borderRadius: 30,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={deleteCliente}
+            >
+              <Text style={{ color: "white" }}>
+                Eliminar
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                padding: 5,
+                backgroundColor: Colors.gray,
+                marginBottom: 10,
+                borderRadius: 30,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={closeModal}
+            >
+              <Text
+                style={{ color: Colors.text }}
+              >
+                Cancelar
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
-            <Modal
-                isVisible={isModalVisibleConfirm}
-                animationIn="zoomIn"
-                animationOut="slideOutDown"
-                animationInTiming={1000}
-                animationOutTiming={1000}
+      <Modal
+        isVisible={isModalVisibleConfirm}
+        animationIn="zoomIn"
+        animationOut="slideOutDown"
+        animationInTiming={1000}
+        animationOutTiming={1000}
+      >
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 40,
+              borderRadius: 20,
+            }}
+          >
+            <Text
+              style={{
+                marginBottom: 10,
+                fontSize: 16,
+              }}
             >
-                <View
-                    style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-                >
-                    <View
-                        style={{
-                            backgroundColor: "white",
-                            padding: 40,
-                            borderRadius: 20,
-                        }}
-                    >
-                        <Text
-                            style={{
-                                fontFamily: "poppins-regular",
-                                marginBottom: 10,
-                                fontSize: 16,
-                            }}
-                        >
-                            Su cuenta ha sido eliminada
-                        </Text>
-                        <TouchableOpacity
-                            style={{
-                                padding: 5,
-                                backgroundColor: Colors.success,
-                                marginBottom: 10,
-                                borderRadius: 30,
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}
-                            onPress={confirmDelete}
-                        >
-                            <Text style={{ fontFamily: "poppins-regular", color: "white" }}>
-                                Aceptar
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
-        </ScrollView>
-    )
+              Su cuenta ha sido eliminada
+            </Text>
+            <TouchableOpacity
+              style={{
+                padding: 5,
+                backgroundColor: Colors.success,
+                marginBottom: 10,
+                borderRadius: 30,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={confirmDelete}
+            >
+              <Text style={{ color: "white" }}>
+                Aceptar
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
+  )
 }
 
 export default Perfil
 
 const styles = StyleSheet.create({
-    textTittle: {
-      fontSize: 16,
-      color: Colors.primary,
-      marginVertical: 10,
-      fontFamily: "poppins-bold",
-    },
-    textData: {
-      fontSize: 14,
-      fontFamily: "poppins-regular",
-      color: Colors.text,
-    },
-    button: {
-      padding: 15,
-      backgroundColor: Colors.primary,
-  
-      marginTop: 15,
-      borderRadius: 30,
-    },
-    buttonDelete: {
-      padding: 15,
-      backgroundColor: Colors.danger,
-      marginTop: 15,
-      borderRadius: 30,
-    },
-    buttonText: {
-      color: Colors.onPrimary,
-      textAlign: "center",
-      fontSize: 16,
-      fontFamily: "poppins-semiBold",
-    },
-    profileContainer: {
-      alignItems: "center",
-      marginBottom: 10,
-    },
-  });
+  textTittle: {
+    fontSize: 16,
+    color: Colors.primary,
+    marginVertical: 10,
+  },
+  textData: {
+    fontSize: 14,
+    color: Colors.text,
+  },
+  button: {
+    padding: 15,
+    backgroundColor: Colors.primary,
+
+    marginTop: 15,
+    borderRadius: 30,
+  },
+  buttonDelete: {
+    padding: 15,
+    backgroundColor: Colors.danger,
+    marginTop: 15,
+    borderRadius: 30,
+  },
+  buttonText: {
+    color: Colors.onPrimary,
+    textAlign: "center",
+    fontSize: 16,
+  },
+  profileContainer: {
+    alignItems: "center",
+    marginBottom: 10,
+  },
+});

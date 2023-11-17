@@ -2,38 +2,29 @@ import React from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { CardImage } from './Car';
-
-interface Product {
-  idProductos: number;
-  nombre: string;
-  precio: string;
-  descripcion: string;
-  idCategoria: number;
-  cantidad: number;
-  idProductor: number;
-  estado: number;
-  fechaRegistro: string;
-  fechaActualizacion: string;
-  fechaVencimiento: string;
-  ruta: { ruta: string }[];
-}
+import { router } from 'expo-router';
+import { Product } from '../config/Models';
 
 const MyCart = ({ product }: { product: Product }) => {
-  console.log(product.nombre)
   return (
     <TouchableOpacity
-      onPress={() => {}}
+      onPress={() => router.push({
+        pathname: "/Detalles",
+        params: {
+          productId: product.idProductos
+        }
+      })}
       style={{
         width: '48%',
         marginVertical: 14,
+        borderRadius: 25,
+        backgroundColor: '#FFFFFF',
       }}
     >
       <View
         style={{
           width: '100%',
           height: 100,
-          borderRadius: 10,
-          backgroundColor: '#FFFFFF',
           position: 'relative',
           justifyContent: 'center',
           alignItems: 'center',
@@ -70,7 +61,7 @@ const MyCart = ({ product }: { product: Product }) => {
         <CardImage
           source={{
             uri:
-              `${product.ruta[0].ruta}`,
+              `${product.ruta[product.mainIndex].ruta}`,
           }}
           style={{
             width: '80%',
@@ -79,68 +70,71 @@ const MyCart = ({ product }: { product: Product }) => {
           }}
         />
       </View>
-      <Text
-        style={{
-          fontSize: 12,
-          color: '#000000',
-          fontWeight: '600',
-          marginBottom: 2,
-        }}
-      >
-        {product.nombre}
-      </Text>
-      {'accessory' == 'accessory' ? (
-        true ? (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <FontAwesome
-              name="circle"
+      <View style={{ marginLeft: 20, marginBottom: 15}}>
+        <Text
+          style={{
+            fontSize: 12,
+            color: '#000000',
+            fontWeight: '600',
+            marginBottom: 2,
+          }}
+        >
+          {product.nombre}
+        </Text>
+        {'accessory' == 'accessory' ? (
+          product.cantidad > 0 ? (
+            <View
               style={{
-                fontSize: 12,
-                marginRight: 6,
-                color: '#00FF00',
-              }}
-            />
-            <Text
-              style={{
-                fontSize: 12,
-                color: '#006600',
+                flexDirection: 'row',
+                alignItems: 'center',
               }}
             >
-              Available
-            </Text>
-          </View>
-        ) : (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <FontAwesome
-              name="circle"
+              <FontAwesome
+                name="circle"
+                style={{
+                  fontSize: 12,
+                  marginRight: 6,
+                  color: '#00AA00',
+                  marginVertical: 5
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: '#006600',
+                }}
+              >
+                Disponible
+              </Text>
+            </View>
+          ) : (
+            <View
               style={{
-                fontSize: 12,
-                marginRight: 6,
-                color: '#FF0000',
-              }}
-            />
-            <Text
-              style={{
-                fontSize: 12,
-                color: '#FF0000',
+                flexDirection: 'row',
+                alignItems: 'center',
               }}
             >
-              Unavailable
-            </Text>
-          </View>
-        )
-      ) : null}
-      <Text>{product.precio} Bs.</Text>
+              <FontAwesome
+                name="circle"
+                style={{
+                  fontSize: 12,
+                  marginRight: 6,
+                  color: '#FF0000',
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: '#FF0000',
+                }}
+              >
+                No disponible
+              </Text>
+            </View>
+          )
+        ) : null}
+        <Text>{product.precio} Bs.</Text>
+      </View>
     </TouchableOpacity>
   );
 };

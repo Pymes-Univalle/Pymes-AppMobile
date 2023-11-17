@@ -7,6 +7,10 @@ export const COLOURS = {
     backgroundLight: '#F0F0F3',
     backgroundMedium: '#B9B9B9',
     backgroundDark: '#777777',
+    grayInput: '#D4DDE1',
+    blueText: '#3A51DD',
+    greenText: '#335252',
+    darkGray: '#2F2E30'
   };
   
   
