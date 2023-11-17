@@ -5,10 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  ToastAndroid,
   StyleSheet,
-  Button,
-  Alert,
   Pressable,
   ActivityIndicator,
 } from "react-native";
@@ -132,79 +129,11 @@ const Carrito = () => {
     return cantidadObj ? cantidadObj.cantidad : 0;
   };
 
-  //checkout
-
-  // const checkOut = async () => {
-  //   try {
-  //     let productos = JSON.parse(await AsyncStorage.getItem("cartItems"));
-  //     const requestData = {
-  //       idCliente: parseInt( await AsyncStorage.getItem("my-key")),
-  //       total: total,
-  //       detalleventas: productos.map((producto) => ({
-  //         idProducto: producto.idProductos,
-  //         cantidad: producto.cantidad,
-  //         nit: "123456789", // Reemplaza con el valor real de nit
-  //         precioUnitario: parseFloat(producto.precio),
-  //         importe: parseFloat(producto.precio) * producto.cantidad,
-  //       })),
-  //     };
-
-  //     axios
-  //       .post("http://192.168.0.100:3000/api/venta/", requestData)
-  //       .then((response) => {
-  //         alert("Respuesta del servidor:"+ response.data);
-  //         // Puedes manejar la respuesta del servidor aquí
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error en la petición:", error);
-  //         // Puedes manejar el error aquí
-  //       });
-
-  //     //await AsyncStorage.removeItem('cartItems');
-
-  //     //console.log(requestData)
-  //   } catch (error) {
-  //     return error;
-  //   }
-
-  //   // router.push("/Home")
-  // };
+ 
 
   const checkOut = async () => {
     setPopupVisible(true);
   };
-
-  // const handleAccept = async () => {
-  //   try {
-  //     setLoading(true);
-
-  //     let productos = JSON.parse(await AsyncStorage.getItem("cartItems"));
-  //     const requestData = {
-  //       idCliente: parseInt(await AsyncStorage.getItem("my-key")),
-  //       total: total,
-  //       detalleventas: productos.map((producto) => ({
-  //         idProducto: producto.idProductos,
-  //         cantidad: producto.cantidad,
-  //         nit: "123456789", // Reemplaza con el valor real de nit
-  //         precioUnitario: parseFloat(producto.precio),
-  //         importe: parseFloat(producto.precio) * producto.cantidad,
-  //       })),
-  //     };
-
-  //     await axios.post("http://192.168.0.100:3000/api/venta/", requestData);
-
-  //     setLoading(false);
-  //     setPopupVisible(false);
-  //     await AsyncStorage.removeItem("cartItems");
-
-  //     alert("La compra fue realizada");
-  //     router.push("/Home");
-  //   } catch (error) {
-  //     setLoading(false);
-  //     setPopupVisible(false);
-  //     return error;
-  //   }
-  // };
 
   const handleAccept = async () => {
     try {
@@ -216,13 +145,16 @@ const Carrito = () => {
       const requestData = {
         idCliente: idCliente,
         total: total,
-        detalleventas: productos.map((producto) => ({
-          idProducto: producto.idProductos,
-          cantidad: producto.cantidad,
-          nit: "123456789", // Reemplaza con el valor real de nit
-          precioUnitario: parseFloat(producto.precio),
-          importe: parseFloat(producto.precio) * producto.cantidad,
-        })),
+        detalleventas: productos.map((producto) => {
+          const cantidadProducto = getCantidadProducto(producto.idProductos);
+          return {
+            idProducto: producto.idProductos,
+            cantidad: cantidadProducto,
+            nit: "123456789", // Reemplaza con el valor real de nit
+            precioUnitario: parseFloat(producto.precio),
+            importe: parseFloat(producto.precio) * cantidadProducto,
+          };
+        }),
       };
 
       // Hacer la primera petición para registrar la venta
@@ -248,15 +180,14 @@ const Carrito = () => {
           })
         );
         setCantidadesProductos([]);
-        
 
         setLoading(false);
         setPopupVisible(false);
-       
+
         await AsyncStorage.removeItem("cartItems");
 
         alert("La compra fue realizada");
-        alert("CANTIDADEEEESSSS "+cantidadesProductos);
+
         router.push("/Home");
       } else {
         // Manejar caso donde la venta no fue exitosa
@@ -269,6 +200,14 @@ const Carrito = () => {
       setPopupVisible(false);
       return error;
     }
+  };
+
+  // Función para obtener la cantidad del producto desde el array cantidadesProductos
+  const getCantidadProducto = (idProducto) => {
+    const cantidadProducto = cantidadesProductos.find(
+      (producto) => producto.idProducto === idProducto
+    );
+    return cantidadProducto ? cantidadProducto.cantidad : 0; // Devolver 0 si no se encuentra el producto
   };
 
   const handleCancel = () => {
@@ -442,37 +381,7 @@ const Carrito = () => {
       }}
     >
       <ScrollView>
-        {/* <View
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            paddingTop: 16,
-            paddingHorizontal: 16,
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <MaterialCommunityIcons
-              name="chevron-left"
-              style={{
-                fontSize: 18,
-                color: COLOURS.backgroundDark,
-                padding: 12,
-                backgroundColor: COLOURS.backgroundLight,
-                borderRadius: 12,
-              }}
-            />
-          </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 14,
-              color: COLOURS.black,
-              fontWeight: '400',
-            }}>
-            Order Details
-          </Text>
-          <View></View>
-        </View> */}
+        
         <View style={{ paddingHorizontal: 16 }}>
           {product.length > 0 ? (
             product.map(renderProducts)
@@ -491,77 +400,7 @@ const Carrito = () => {
           )}
         </View>
         <View>
-          {/* <View
-            style={{
-              paddingHorizontal: 16,
-              marginVertical: 10,
-            }}>
-            <Text
-              style={{
-                fontSize: 16,
-                color: COLOURS.black,
-                fontWeight: '500',
-                letterSpacing: 1,
-                marginBottom: 20,
-              }}>
-              Delivery Location
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  width: '80%',
-                  alignItems: 'center',
-                }}>
-                <View
-                  style={{
-                    backgroundColor: COLOURS.backgroundLight,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 12,
-                    borderRadius: 10,
-                    marginRight: 18,
-                  }}>
-                  <MaterialCommunityIcons
-                    name="truck-delivery-outline"
-                    style={{
-                      fontSize: 18,
-                      color: COLOURS.blue,
-                    }}
-                  />
-                </View>
-                <View>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: COLOURS.black,
-                      fontWeight: '500',
-                    }}>
-                    2 Petre Melikishvili St.
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: COLOURS.black,
-                      fontWeight: '400',
-                      lineHeight: 20,
-                      opacity: 0.5,
-                    }}>
-                    0162, Tbilisi
-                  </Text>
-                </View>
-              </View>
-              <MaterialCommunityIcons
-                name="chevron-right"
-                style={{fontSize: 22, color: COLOURS.black}}
-              />
-            </View>
-          </View> */}
+          
           <View
             style={{
               paddingHorizontal: 16,
@@ -699,25 +538,7 @@ const Carrito = () => {
                 marginBottom: 22,
               }}
             >
-              {/* <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: '400',
-                  maxWidth: '80%',
-                  color: COLOURS.black,
-                  opacity: 0.5,
-                }}>
-                Envio
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: '400',
-                  color: COLOURS.black,
-                  opacity: 0.8,
-                }}>
-                {total / 20} Bs.
-              </Text> */}
+              
             </View>
             <View
               style={{
@@ -786,38 +607,38 @@ const Carrito = () => {
         </TouchableOpacity>
 
         <Modal animationInTiming={500} isVisible={isPopupVisible}>
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <MaterialCommunityIcons
-            name="shopping"
-            size={50}
-            color="#2196F3"
-            style={styles.icon}
-          />
-          <Text style={styles.modalText}>
-            ¿Desea realizar la compra por {total} Bs.?
-          </Text>
-          {isLoading ? (
-            <ActivityIndicator size="large" color="#2196F3" />
-          ) : (
-            <View style={styles.buttonContainer}>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={handleCancel}
-              >
-                <Text style={styles.textStyle}>Cancelar</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.button, styles.buttonOpen]}
-                onPress={handleAccept}
-              >
-                <Text style={styles.textStyle}>Comprar</Text>
-              </Pressable>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <MaterialCommunityIcons
+                name="shopping"
+                size={50}
+                color="#2196F3"
+                style={styles.icon}
+              />
+              <Text style={styles.modalText}>
+                ¿Desea realizar la compra por {total} Bs.?
+              </Text>
+              {isLoading ? (
+                <ActivityIndicator size="large" color="#2196F3" />
+              ) : (
+                <View style={styles.buttonContainer}>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={handleCancel}
+                  >
+                    <Text style={styles.textStyle}>Cancelar</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.button, styles.buttonOpen]}
+                    onPress={handleAccept}
+                  >
+                    <Text style={styles.textStyle}>Comprar</Text>
+                  </Pressable>
+                </View>
+              )}
             </View>
-          )}
-        </View>
-      </View>
-    </Modal>
+          </View>
+        </Modal>
       </View>
     </View>
   );
