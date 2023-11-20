@@ -11,7 +11,6 @@ export default () => {
     const verify = async () => {
         const id = await AsyncStorage.getItem('my-key');
         setNeedLogin(id);
-        console.log(id);
     }
 
     useFocusEffect(

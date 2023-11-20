@@ -22,10 +22,10 @@ const Home = () => {
     axios.get(`http://${process.env.EXPO_PUBLIC_IP}:3000/api/productor/productos/2`)
       .then(response => {
         setProductos(response.data.productos);
-        console.log(response.data.productos);
+        console.log( "P "+ response.data.productos);
       })
       .catch(error => {
-        console.log(error);
+        console.log("e "+error);
       });
   }, []);
 
