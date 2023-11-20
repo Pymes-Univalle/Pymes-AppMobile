@@ -61,7 +61,7 @@ const MyCart = ({ product }: { product: Product }) => {
         <CardImage
           source={{
             uri:
-              `${product.ruta[product.mainIndex].ruta}`,
+              `${product ? product.ruta[product.mainIndex].ruta: 'https://media.istockphoto.com/id/1454848933/es/vector/imagen-no-encontrada-ilustraci%C3%B3n-vectorial.jpg?s=612x612&w=0&k=20&c=0PasC0voizz58oKVgHOtrxOoJ-J8kznoisFbdyMfBkU='}`,
           }}
           style={{
             width: '80%',
