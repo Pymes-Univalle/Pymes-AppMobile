@@ -19,7 +19,7 @@ const Home = () => {
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<{ id: number | null, name: string | null }>({ id: null, name: null });
   useEffect(() => {
-    axios.get(`http://${process.env.EXPO_PUBLIC_IP}:3000/api/productor/productos/2`)
+    axios.get(`http://${process.env.EXPO_PUBLIC_IP+":"+process.env.EXPO_PUBLIC_PORT}/api/productor/productos/2`)
       .then(response => {
         setProductos(response.data.productos);
         console.log( "P "+ response.data.productos);

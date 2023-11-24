@@ -55,7 +55,7 @@ import {
       } else {
         try {
           const response = await axios.post(
-            `http://${process.env.EXPO_PUBLIC_IP}:3000/api/login`,
+            `http://${process.env.EXPO_PUBLIC_IP+':'+process.env.EXPO_PUBLIC_PORT}/api/login`,
             {
               correo: email,
               contrasena: CryptoJS.MD5(password).toString(CryptoJS.enc.Hex),

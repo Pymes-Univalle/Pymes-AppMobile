@@ -100,7 +100,7 @@ const Register = () => {
           console.log("try");
           console.log(user);
           const resp = await axios.post(
-            `http://${process.env.EXPO_PUBLIC_IP}:3000/api/cliente`,
+            `http://${process.env.EXPO_PUBLIC_IP+':'+process.env.EXPO_PUBLIC_PORT}/api/cliente`,
             {
               nombre: user.nombres,
               correo: user.correo,

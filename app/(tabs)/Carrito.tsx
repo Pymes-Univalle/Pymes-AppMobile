@@ -900,7 +900,7 @@ const getTotal = (productData) => {
       let ventaResponse;
       try {
         ventaResponse = await axios.post(
-          `http://${process.env.EXPO_PUBLIC_IP}:3000/api/venta`,
+          `http://${process.env.EXPO_PUBLIC_IP+':'+process.env.EXPO_PUBLIC_PORT}/api/venta`,
           {
             idCliente: idCliente,
             total: total,
@@ -932,7 +932,7 @@ const getTotal = (productData) => {
             const idProducto = cantidadProducto.idProducto;
 
             await axios.put(
-              `http://${process.env.EXPO_PUBLIC_IP}:3000/api/venta/stock/${idProducto}`,
+              `http://${process.env.EXPO_PUBLIC_IP+':'+process.env.EXPO_PUBLIC_PORT}/api/venta/stock/${idProducto}`,
               {
                 cantidad: cantidadNueva,
               }

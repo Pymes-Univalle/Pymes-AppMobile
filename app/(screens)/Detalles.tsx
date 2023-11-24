@@ -56,7 +56,7 @@ const ProductInfo = () => {
     try {
       //const id = await AsyncStorage.getItem('my-key');
       const response = await axios.get(
-        `http://${process.env.EXPO_PUBLIC_IP}:3000/api/producto/${productId}`
+        `http://${process.env.EXPO_PUBLIC_IP+':'+process.env.EXPO_PUBLIC_PORT}/api/producto/${productId}`
       );
       if (response.status === 200) {
         const productData = await response.data.productos;

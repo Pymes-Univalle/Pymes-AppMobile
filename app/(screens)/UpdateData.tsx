@@ -63,7 +63,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
         try {
           const id = await AsyncStorage.getItem('my-key');
           const response = await axios.get(
-            `http://${process.env.EXPO_PUBLIC_IP}:3000/api/cliente/${id}`
+            `http://${process.env.EXPO_PUBLIC_IP+':'+process.env.EXPO_PUBLIC_PORT}/api/cliente/${id}`
           );
           if (response.status === 200) {
             const data = await response.data;
@@ -118,7 +118,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
         try {
           const id = await AsyncStorage.getItem('my-key');
           const resp = await axios.put(
-            `http://${process.env.EXPO_PUBLIC_IP}:3000/api/cliente/${id}`,
+            `http://${process.env.EXPO_PUBLIC_IP+':'+process.env.EXPO_PUBLIC_PORT}/api/cliente/${id}`,
             {
               nombre: user.nombres,
   

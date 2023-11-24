@@ -36,7 +36,7 @@ const ChangePass = () => {
                 return;
             }
             const id = await AsyncStorage.getItem('my-key');
-            const response = await axios.put(`http://${process.env.EXPO_PUBLIC_IP}:3000/api/login/${id}`, {
+            const response = await axios.put(`http://${process.env.EXPO_PUBLIC_IP+':'+process.env.EXPO_PUBLIC_PORT}/api/login/${id}`, {
                 contrasena: CryptoJS.MD5(newPass).toString(
                     CryptoJS.enc.Hex
                   )
